@@ -21,14 +21,6 @@ for row in data:
         else:
             branching_logic[row[bl]] = [row[field_name]]
 
-
-""" for key, value in branching_logic.items():
-    print(key.replace("[event-name]","") + " shows:")
-    for item in value:
-        print("\t" + item)
-    print("\n") """
-
-
 output = "dependent_fields.txt"
 with open(output, "w") as out:
     for key, value in branching_logic.items():
@@ -36,5 +28,3 @@ with open(output, "w") as out:
         for item in value:
             out.write("\t" + item + "\n")
     out.write("\n")
-
-print("Finished")
