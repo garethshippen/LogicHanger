@@ -29,7 +29,7 @@ for row in data:
     print("\n") """
 
 
-output = "output.txt"
+output = "dependent_fields.txt"
 with open(output, "w") as out:
     for key, value in branching_logic.items():
         out.write("\n" + key.replace("[event-name]","") + " shows:\n")
