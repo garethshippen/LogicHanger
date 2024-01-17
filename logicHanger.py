@@ -49,7 +49,6 @@ class Field():
 def read_csv(input_file):
     fields = {}
     roots = []
-    #return_list = []
     with open(input_file) as inp:
         data = csv.DictReader(inp)
         for row in data:
@@ -58,115 +57,43 @@ def read_csv(input_file):
             if row["Branching Logic (Show field only if...)"] == "":
                 roots.append(row[field_name])
     return fields, roots
-data, roots = read_csv("source.csv") # fieldname points to Field object
+data, roots = read_csv("source.csv")
 
 unknowns = []
 for key, value in data.items():
     parents = value.get_shown_by_body()
     for parent in parents:
         try:
-            #data[dependent].add_shows(key)
             data[parent].add_shows(value)
         except Exception:
             unknowns.append((parent,key))
 
-
-
-def show(field, level):
+def show_logic(field, level):
     print(level * "\t" + level * "-" + field.get_field_name())
     children = field.get_shows()
-    if children: # field shows other fields
+    if children:
         for child in children:
-            show(child, level + 1)
+            show_logic(child, level + 1)
 
-for root in roots:
-    show(data[root],  0)
-    print()
-exit()
+""" for root in roots:
+    show_logic(data[root],  0)
+    print() """
 
-
-
-
-
-
-
-
-
-
-
-
-
-def show(field_object, level, fields):
-    print(field_object.get_field_name())
-    children = field_object.get_shows()
-    if len(children) == 0:
-        return #field_object.get_field_name()
-    else:
+def store_logic(field, level, storage):
+    storage.append((level * "  " + level * "-" + field.get_field_name()))
+    children = field.get_shows()
+    if children:
         for child in children:
-            print(level * "\t" + level * "----" + show(child, level + 1, fields))
+            store_logic(child, level + 1, storage)
 
+lines = []
 for root in roots:
-    show(data[root], 0, data)
+    store_logic(data[root],  0, lines)
 
-
-""" for name, field in data.items():
-    if field.get_shown_by() != None: #this field is dependent on another
-        pass """
-#fields[55].show_field()
-
-# iter through fields
-# if field has a shown_by, look up that shown by, and add the field to the parents "shows"
-
-
-exit()
-for name, field in data.items():
-    if field.get_shown_by():
-        data[field.get_shown_by_body()].set_shows(field)
-a = data["s_obstetric"].get_shown_by_body()
-data[a].show_field()
-
-exit()
-branching_logic = {}
-
-#field_name = list(data[0].keys())[0]
-bl = "Branching Logic (Show field only if...)"
-
-for row in data:
-    if row[bl] != "":
-        if branching_logic.get(row[bl]):
-            branching_logic[row[bl]].append(row[field_name])
-        else:
-            branching_logic[row[bl]] = [row[field_name]]
-
-for fields in branching_logic.values():
-    for field in fields:
-        for key in branching_logic.keys():
-            #print(key.replace("[event-name]",""))
-            if field in key.replace("[event-name]",""):
-                print(key, field)
-print("Finished")
-exit()
-
-
-for key, value in branching_logic.items():
-    print(key)
-    print(value)
-    print()
-exit()
-key = "[" + branching_logic["[occu_expose]"] + "]"
-print(branching_logic[key])
-
-exit()
 output = "dependent_fields.txt"
 with open(output, "w") as out:
-    for key, value in branching_logic.items():
-        out.write("\n" + key.replace("[event-name]","") + " shows:\n")
-        for item in value:
-            out.write("\t" + item + "\n")
-    out.write("\n")
-
-def show_bl(bl_dict, term, level):
-    terms = bl_dict.get(term)
-    if terms != None:
-        for term in terms:
-            sublevel = show_bl(bl_dict, None, None)
+    for line in lines:
+        out.write(line + "\n")
+    out.write("\nThe following fields depend on other fields that weren't found.\n")
+    for unknown in unknowns:
+        out.write(unknown[1] + " depends on " + unknown[0] + "\n")
