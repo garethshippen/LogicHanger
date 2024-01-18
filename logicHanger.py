@@ -1,5 +1,13 @@
 import csv
+import sys
 
+""" import sys
+
+f = sys.argv
+
+print(f)
+for i in f:
+    print(i) """
 class Field():
     def __init__(self, row, fieldname):
         self.row = row
@@ -57,16 +65,17 @@ def read_csv(input_file):
             if row["Branching Logic (Show field only if...)"] == "":
                 roots.append(row[field_name])
     return fields, roots
-data, roots = read_csv("source.csv")
 
-unknowns = []
-for key, value in data.items():
-    parents = value.get_shown_by_body()
-    for parent in parents:
-        try:
-            data[parent].add_shows(value)
-        except Exception:
-            unknowns.append((parent,key))
+def find_unknowns(data):
+    unknowns = []
+    for key, value in data.items():
+        parents = value.get_shown_by_body()
+        for parent in parents:
+            try:
+                data[parent].add_shows(value)
+            except Exception:
+                unknowns.append((parent,key))
+    return unknowns
 
 def show_logic(field, level):
     print(level * "\t" + level * "-" + field.get_field_name())
@@ -79,21 +88,43 @@ def show_logic(field, level):
     show_logic(data[root],  0)
     print() """
 
-def store_logic(field, level, storage):
-    storage.append((level * "  " + level * "-" + field.get_field_name()))
+def store_logic(field, level, storage, verbose):
+    if verbose:
+        storage.append(level * "  " + level * "-" + field.get_field_name() + "\t\t" + field.shown_by)
+    else:
+        storage.append((level * "  " + level * "-" + field.get_field_name()))
     children = field.get_shows()
     if children:
         for child in children:
-            store_logic(child, level + 1, storage)
+            store_logic(child, level + 1, storage, verbose)
 
-lines = []
-for root in roots:
-    store_logic(data[root],  0, lines)
+def traverse(data, roots, verbose):
+    lines = []
+    for root in roots:
+        store_logic(data[root],  0, lines, verbose)
+    return lines
 
-output = "dependent_fields.txt"
-with open(output, "w") as out:
-    for line in lines:
-        out.write(line + "\n")
-    out.write("\nThe following fields depend on other fields that weren't found.\n")
-    for unknown in unknowns:
-        out.write(unknown[1] + " depends on " + unknown[0] + "\n")
+def export(file_name, lines, unknowns):
+    with open(file_name, "w") as out:
+        for line in lines:
+            out.write(line + "\n")
+        out.write("\nThe following fields depend on other fields that weren't found.\n")
+        for unknown in unknowns:
+            out.write(unknown[1] + " depends on " + unknown[0] + "\n")
+""" 
+f = sys.argv
+print(f)
+for i in f:
+    print(i) 
+"""
+args = sys.argv
+verbose = False
+input_file = "source.csv"
+output_file = "dependent_fields.txt"
+
+
+
+data, roots = read_csv(input_file)
+unknowns = find_unknowns(data)
+lines = traverse(data, roots, verbose)
+export(output_file, lines, unknowns)
