@@ -99,10 +99,27 @@ with open(output, "w") as out:
     out.write("\nThe following fields depend on other fields that weren't found.\n")
     for unknown in unknowns:
         out.write(unknown[1] + " depends on " + unknown[0] + "\n") """
-        
+
+#################
+### BEGIN GUI ###
+#################
 window = Tk()
 window.title("REDCap Logic Tree")
-window.geometry("600x300")
+window.geometry("300x600")
+
+menubar = Menu(window)
+window.config(menu=menubar)
+filemenu = Menu(menubar)
+optionmenu = Menu(menubar)
+
+menubar.add_cascade(label="File", menu=filemenu)
+filemenu.add_command(label = "Open")
+filemenu.add_command(label = "Save")
+filemenu.add_separator()
+filemenu.add_command(label="Exit", command=window.quit)
+
+menubar.add_cascade(label="Options", menu=optionmenu)
+optionmenu.add_checkbutton(label="Verbose Mode")
 
 yscroll = Scrollbar(window)
 yscroll.pack(side=RIGHT, fill=Y)
@@ -132,3 +149,7 @@ for unknown in unknowns:
 yscroll.config(command=text.yview)
 
 window.mainloop()
+
+###############
+### END GUI ###
+###############
