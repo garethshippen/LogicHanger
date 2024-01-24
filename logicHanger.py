@@ -117,11 +117,16 @@ print(f)
 for i in f:
     print(i) 
 """
-args = sys.argv
+# Defaults
 verbose = False
 input_file = "source.csv"
 output_file = "dependent_fields.txt"
 
+args = sys.argv
+args.pop(0)
+if "-v" in args:
+    verbose = True
+    args.remove("-v")
 
 
 data, roots = read_csv(input_file)
