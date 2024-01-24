@@ -1,4 +1,5 @@
 import csv
+from tkinter import *
 
 class Field():
     def __init__(self, row, fieldname):
@@ -90,10 +91,44 @@ lines = []
 for root in roots:
     store_logic(data[root],  0, lines)
 
-output = "dependent_fields.txt"
+
+""" output = "dependent_fields.txt"
 with open(output, "w") as out:
     for line in lines:
         out.write(line + "\n")
     out.write("\nThe following fields depend on other fields that weren't found.\n")
     for unknown in unknowns:
-        out.write(unknown[1] + " depends on " + unknown[0] + "\n")
+        out.write(unknown[1] + " depends on " + unknown[0] + "\n") """
+        
+window = Tk()
+window.title("REDCap Logic Tree")
+window.geometry("600x300")
+
+yscroll = Scrollbar(window)
+yscroll.pack(side=RIGHT, fill=Y)
+
+text = Text(window,yscrollcommand = yscroll.set)
+text.pack(side=LEFT, fill = BOTH)
+text.tag_config('one', foreground = "red")
+text.tag_config('two', foreground = "blue")
+text.tag_config('three', foreground = "#1d5c11")
+text.tag_config('four', foreground="#7c206f")
+
+for line in lines:
+    match line.count("-")%5:
+        case 1:
+            text.insert(END, line + "\n", 'one')
+        case 2: 
+            text.insert(END, line + "\n", 'two')
+        case 3:
+            text.insert(END, line + "\n", 'three')
+        case 4:
+            text.insert(END, line + "\n", 'four')
+        case _:
+            text.insert(END, line + "\n")
+for unknown in unknowns:
+    text.insert(END, "\n" + unknown[1] + " " + unknown[0])
+
+yscroll.config(command=text.yview)
+
+window.mainloop()
