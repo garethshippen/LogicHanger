@@ -1,7 +1,6 @@
 import csv
 import copy
 from tkinter import *
-from tkinter import filedialog
 
 class Field():
     def __init__(self, row, fieldname):
@@ -48,6 +47,7 @@ class Field():
         print("Shown by body: {}".format(self.shown_by_body))
         print("Shows: {}".format(self.shows)) # trying to find this out
 
+<<<<<<< HEAD
 def gen_tree(filepath): # Takes a filepath and returns a list of strings making a tree
     def store_logic(field, level, storage):
         storage.append((level * "  " + level * "-" + field.get_field_name()))
@@ -113,8 +113,62 @@ def list_to_string(list_of_strings):
 lines = list_to_string(gen_tree('source.csv'))
 for line in lines:
     print(line)
+=======
+    
+def read_csv(input_file):
+    fields = {}
+    roots = []
+    with open(input_file) as inp:
+        data = csv.DictReader(inp)
+        for row in data:
+            field_name = list(row.keys())[0]
+            fields[row[field_name]] = Field(row, field_name)
+            if row["Branching Logic (Show field only if...)"] == "":
+                roots.append(row[field_name])
+    return fields, roots
+data, roots = read_csv("source.csv")
 
-exit()
+unknowns = []
+for key, value in data.items():
+    parents = value.get_shown_by_body()
+    for parent in parents:
+        try:
+            data[parent].add_shows(value)
+        except Exception:
+            unknowns.append((parent,key))
+
+def show_logic(field, level):
+    print(level * "\t" + level * "-" + field.get_field_name())
+    children = field.get_shows()
+    if children:
+        for child in children:
+            show_logic(child, level + 1)
+
+""" for root in roots:
+    show_logic(data[root],  0)
+    print() """
+
+def store_logic(field, level, storage):
+    storage.append((level * "  " + level * "-" + field.get_field_name()))
+    children = field.get_shows()
+    if children:
+        for child in children:
+            store_logic(child, level + 1, storage)
+
+lines = []
+for root in roots:
+    store_logic(data[root],  0, lines)
+
+
+""" output = "dependent_fields.txt"
+with open(output, "w") as out:
+    for line in lines:
+        out.write(line + "\n")
+    out.write("\nThe following fields depend on other fields that weren't found.\n")
+    for unknown in unknowns:
+        out.write(unknown[1] + " depends on " + unknown[0] + "\n") """
+>>>>>>> parent of 22179cd (Changed main pipline to function)
+
 #################
 ### BEGIN GUI ###
 #################
@@ -136,10 +190,17 @@ filemenu.add_command(label="Exit", command=window.quit)
 menubar.add_cascade(label="Options", menu=optionmenu)
 optionmenu.add_checkbutton(label="Verbose Mode")
 
-label_space = Label(window, text = "Open a Data Dictionary\nfrom the file menu above", justify=LEFT)
-label_space.place(x=0, y=0)
+yscroll = Scrollbar(window)
+yscroll.pack(side=RIGHT, fill=Y)
 
-""" for line in lines:
+text = Text(window,yscrollcommand = yscroll.set)
+text.pack(side=LEFT, fill = BOTH)
+text.tag_config('one', foreground = "red")
+text.tag_config('two', foreground = "blue")
+text.tag_config('three', foreground = "#1d5c11")
+text.tag_config('four', foreground="#7c206f")
+
+for line in lines:
     match line.count("-")%5:
         case 1:
             text.insert(END, line + "\n", 'one')
@@ -154,7 +215,7 @@ label_space.place(x=0, y=0)
 for unknown in unknowns:
     text.insert(END, "\n" + unknown[1] + " " + unknown[0])
 
-yscroll.config(command=text.yview) """
+yscroll.config(command=text.yview)
 
 window.mainloop()
 
