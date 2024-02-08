@@ -47,73 +47,6 @@ class Field():
         print("Shown by body: {}".format(self.shown_by_body))
         print("Shows: {}".format(self.shows)) # trying to find this out
 
-<<<<<<< HEAD
-def gen_tree(filepath): # Takes a filepath and returns a list of strings making a tree
-    def store_logic(field, level, storage):
-        storage.append((level * "  " + level * "-" + field.get_field_name()))
-        children = field.get_shows()
-        if children:
-            for child in children:
-                store_logic(child, level + 1, storage)
-
-    def read_csv(input_file):
-        fields = {}
-        roots = []
-        fieldnames = set()
-        with open(input_file) as inp:
-            data = csv.DictReader(inp)
-            for row in data:
-                fieldname_header = list(row.keys())[0] # == ï»¿"Variable / Field Name"
-                fields[row[fieldname_header]] = Field(row, fieldname_header) # Dictionary of the actual field name pointing to its Field object
-                if row["Branching Logic (Show field only if...)"] == "": # This field has no parent
-                    roots.append(row[fieldname_header])
-                fieldnames.add(row[fieldname_header])
-        return fields, roots, fieldnames
-
-    data, roots, fieldnames = read_csv("source.csv")
-
-    # Get the field names that aren't defined in the data dictionary
-    parents = set()
-    for value in data.values():
-        shown_by = value.get_shown_by_body()
-        for shown in shown_by:
-            parents.add(shown)
-    unknowns = parents - fieldnames
-
-    # Create a blank Field
-    empty_field = copy.deepcopy(data[roots[0]])
-    empty_field.set_field_name("empty")
-
-    # Add 'unknown' fields to data
-    for unknown in unknowns:
-        new_field = copy.deepcopy(empty_field)
-        new_field.set_field_name(unknown)
-        data[unknown] = new_field
-        roots.append(unknown)
-
-    # Associate parents with children
-    unknowns = []
-    for key, value in data.items():
-        parents = value.get_shown_by_body()
-        for parent in parents:
-            try:
-                data[parent].add_shows(value)
-            except Exception:
-                unknowns.append((parent,key))
-
-    lines = []
-    for root in roots:
-        store_logic(data[root],  0, lines)
-    return lines
-
-def list_to_string(list_of_strings):
-    output = [line + "\n" for line in list_of_strings]
-    return output
-
-lines = list_to_string(gen_tree('source.csv'))
-for line in lines:
-    print(line)
-=======
     
 def read_csv(input_file):
     fields = {}
@@ -167,7 +100,6 @@ with open(output, "w") as out:
     out.write("\nThe following fields depend on other fields that weren't found.\n")
     for unknown in unknowns:
         out.write(unknown[1] + " depends on " + unknown[0] + "\n") """
->>>>>>> parent of 22179cd (Changed main pipline to function)
 
 #################
 ### BEGIN GUI ###
