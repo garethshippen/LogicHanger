@@ -144,6 +144,12 @@ def show_logic():
                 case _:
                     text.insert(END, line + "\n")
 
+def save_logic():
+    global lines
+    save_path = fd.asksaveasfile(initialfile="logic.txt",
+                                defaultextension=".txt",
+                                filetypes=[('Text Files','*.csv'),('All Files','*.*')])
+    
 window = Tk()
 window.title("REDCap Logic Tree")
 window.geometry("300x600")
@@ -155,22 +161,18 @@ optionmenu = Menu(menubar)
 
 menubar.add_cascade(label="File", menu=filemenu)
 filemenu.add_command(label = "Open", command= select_file)
-filemenu.add_command(label = "Save")
+filemenu.add_command(label = "Save", command=save_logic)
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=window.quit)
 
 menubar.add_cascade(label="Options", menu=optionmenu)
-optionmenu.add_checkbutton(label="Verbose Mode")
+optionmenu.add_checkbutton(label="Show logic")
 
 yscroll = Scrollbar(window)
 yscroll.pack(side=RIGHT, fill=Y)
 
 xscroll = Scrollbar(window, orient='horizontal')
-xscroll.pack(side=BOTTOM, fill=X)
-
-#####################################
-# text.delete('1.0', END)
-#####################################              
+xscroll.pack(side=BOTTOM, fill=X)             
 
 text = Text(window,yscrollcommand = yscroll.set, xscrollcommand=xscroll.set, wrap=NONE)
 text.pack(side=LEFT, fill = BOTH)
@@ -179,21 +181,7 @@ text.tag_config('two', foreground = "blue")
 text.tag_config('three', foreground = "#1d5c11")
 text.tag_config('four', foreground="#7c206f")
 
-""" if isinstance(lines, str):
-    text.insert(END, lines)
-else:
-    for line in lines:
-        match line.count("-")%5:
-            case 1:
-                text.insert(END, line + "\n", 'one')
-            case 2: 
-                text.insert(END, line + "\n", 'two')
-            case 3:
-                text.insert(END, line + "\n", 'three')
-            case 4:
-                text.insert(END, line + "\n", 'four')
-            case _:
-                text.insert(END, line + "\n") """
+show_logic()
 
 yscroll.config(command=text.yview)
 xscroll.config(command=text.xview)
