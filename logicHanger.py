@@ -14,7 +14,7 @@ class Field():
 
     def set_shown_by(self): # Strips [event-name] from the BL
         bl = "Branching Logic (Show field only if...)"
-        exact = self.row[bl].replace("[event-name]","")
+        exact = self.row[bl].replace("\n","").replace("[event-name]","")
         return exact
     def get_shown_by(self):
         return self.shown_by
@@ -129,8 +129,14 @@ def select_file():
         lines = gen_lines(path)
         show_logic()
 
+def get_level(input):
+    for i in range(len(input)):
+        if input[i] != " ":
+            return i
+
 def show_logic():
     global lines
+    global path
     if path:
         lines = gen_lines(path)
     if isinstance(lines, str):
@@ -141,7 +147,8 @@ def show_logic():
         text.config(state=NORMAL)
         text.delete('1.0', END)
         for line in lines:
-            match line.count("-")%5:
+            #match line.count(" ")%5:
+            match get_level(line)%5:
                 case 1:
                     text.insert(END, line + "\n", 'one')
                 case 2: 
@@ -161,7 +168,7 @@ def save_logic():
         return
     save_path = fd.asksaveasfile(initialfile="logic.txt",\
                                 defaultextension=".txt",\
-                                filetypes=[('Text Files','*.csv'),('All Files','*.*')],\
+                                filetypes=[('Text Files','*.txt'),('All Files','*.*')],\
                                 mode='w')
     if save_path:
         for line in lines:
@@ -170,7 +177,7 @@ def save_logic():
                 
 window = Tk()
 window.title("REDCap Logic Tree")
-window.geometry("300x600")
+window.geometry("600x600")
 
 menubar = Menu(window)
 window.config(menu=menubar)
@@ -194,7 +201,7 @@ xscroll = Scrollbar(window, orient='horizontal')
 xscroll.pack(side=BOTTOM, fill=X)             
 
 text = Text(window,yscrollcommand = yscroll.set, xscrollcommand=xscroll.set, wrap=NONE)
-text.pack(side=LEFT, fill = BOTH)
+text.pack(side=LEFT, fill = BOTH, expand=1)
 text.tag_config('one', foreground = "red")
 text.tag_config('two', foreground = "blue")
 text.tag_config('three', foreground = "#1d5c11")
