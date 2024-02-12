@@ -1,3 +1,6 @@
+__author__ = "Gareth Shippen"
+__date__ = "2024-02-12"
+
 import csv
 import copy
 from tkinter import *
