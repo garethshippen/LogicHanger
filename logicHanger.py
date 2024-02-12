@@ -1,6 +1,7 @@
 import csv
 import copy
 from tkinter import *
+from tkinter import filedialog as fd
 
 class Field():
     def __init__(self, row, fieldname_header):
@@ -118,6 +119,14 @@ lines = gen_lines('source.csv')
 #################
 ### BEGIN GUI ###
 #################
+def select_file():
+    filetypes = (
+        ('CSV files', '*.csv')
+    )
+    path = fd.askopenfilename(title="Select Data Dictionary", filetypes=filetypes)
+    
+
+
 window = Tk()
 window.title("REDCap Logic Tree")
 window.geometry("300x600")
@@ -128,7 +137,7 @@ filemenu = Menu(menubar)
 optionmenu = Menu(menubar)
 
 menubar.add_cascade(label="File", menu=filemenu)
-filemenu.add_command(label = "Open")
+filemenu.add_command(label = "Open", command= select_file)
 filemenu.add_command(label = "Save")
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=window.quit)
@@ -141,6 +150,10 @@ yscroll.pack(side=RIGHT, fill=Y)
 
 xscroll = Scrollbar(window, orient='horizontal')
 xscroll.pack(side=BOTTOM, fill=X)
+
+#####################################
+# tex.delete('1.0', END)
+#####################################              
 
 text = Text(window,yscrollcommand = yscroll.set, xscrollcommand=xscroll.set, wrap=NONE)
 text.pack(side=LEFT, fill = BOTH)
