@@ -54,7 +54,7 @@ class Field():
 
 def gen_lines(filename):
     def store_logic(field, level, storage):
-        storage.append((level * "  " + level * "-" + field.get_field_name()))
+        storage.append((level * "  " + level * "-" + field.get_field_name() + full_logic.get() * ("\t\t" + field.shown_by)))
         children = field.get_shows()
         if children:
             for child in children:
@@ -180,7 +180,7 @@ filemenu.add_command(label="Exit", command=window.quit)
 
 menubar.add_cascade(label="Options", menu=optionmenu)
 full_logic = IntVar()
-optionmenu.add_checkbutton(label="Show logic", onvalue=1, offvalue=0, variable=full_logic)
+optionmenu.add_checkbutton(label="Show logic", onvalue=1, offvalue=0, variable=full_logic, command=show_logic)
 
 yscroll = Scrollbar(window)
 yscroll.pack(side=RIGHT, fill=Y)
