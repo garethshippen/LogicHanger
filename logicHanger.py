@@ -179,7 +179,8 @@ filemenu.add_separator()
 filemenu.add_command(label="Exit", command=window.quit)
 
 menubar.add_cascade(label="Options", menu=optionmenu)
-optionmenu.add_checkbutton(label="Show logic")
+full_logic = IntVar()
+optionmenu.add_checkbutton(label="Show logic", onvalue=1, offvalue=0, variable=full_logic)
 
 yscroll = Scrollbar(window)
 yscroll.pack(side=RIGHT, fill=Y)
