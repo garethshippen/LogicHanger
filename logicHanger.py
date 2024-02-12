@@ -146,10 +146,14 @@ def show_logic():
 
 def save_logic():
     global lines
-    save_path = fd.asksaveasfile(initialfile="logic.txt",
-                                defaultextension=".txt",
-                                filetypes=[('Text Files','*.csv'),('All Files','*.*')])
-    
+    save_path = fd.asksaveasfile(initialfile="logic.txt",\
+                                defaultextension=".txt",\
+                                filetypes=[('Text Files','*.csv'),('All Files','*.*')],\
+                                mode='w')
+    for line in lines:
+        save_path.write(line + '\n')
+    save_path.close()
+                
 window = Tk()
 window.title("REDCap Logic Tree")
 window.geometry("300x600")
