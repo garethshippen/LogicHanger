@@ -124,6 +124,25 @@ def select_file():
     path = fd.askopenfilename(title="Select Data Dictionary", filetypes=filetypes)
     if len(path) > 0:
         lines = gen_lines(path)
+        show_logic()
+
+def show_logic():
+    if isinstance(lines, str):
+        text.insert(END, lines)
+    else:
+        text.delete('1.0', END)
+        for line in lines:
+            match line.count("-")%5:
+                case 1:
+                    text.insert(END, line + "\n", 'one')
+                case 2: 
+                    text.insert(END, line + "\n", 'two')
+                case 3:
+                    text.insert(END, line + "\n", 'three')
+                case 4:
+                    text.insert(END, line + "\n", 'four')
+                case _:
+                    text.insert(END, line + "\n")
 
 window = Tk()
 window.title("REDCap Logic Tree")
@@ -160,7 +179,7 @@ text.tag_config('two', foreground = "blue")
 text.tag_config('three', foreground = "#1d5c11")
 text.tag_config('four', foreground="#7c206f")
 
-if isinstance(lines, str):
+""" if isinstance(lines, str):
     text.insert(END, lines)
 else:
     for line in lines:
@@ -174,7 +193,7 @@ else:
             case 4:
                 text.insert(END, line + "\n", 'four')
             case _:
-                text.insert(END, line + "\n")
+                text.insert(END, line + "\n") """
 
 yscroll.config(command=text.yview)
 xscroll.config(command=text.xview)
