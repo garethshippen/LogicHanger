@@ -146,19 +146,22 @@ def show_logic():
     else:
         text.config(state=NORMAL)
         text.delete('1.0', END)
-        for line in lines:
-            #match line.count(" ")%5:
-            match get_level(line)%5:
-                case 1:
-                    text.insert(END, line + "\n", 'one')
-                case 2: 
-                    text.insert(END, line + "\n", 'two')
-                case 3:
-                    text.insert(END, line + "\n", 'three')
-                case 4:
-                    text.insert(END, line + "\n", 'four')
-                case _:
-                    text.insert(END, line + "\n")
+        if not level_colours.get():
+            for line in lines:
+                match get_level(line)%5:
+                    case 1:
+                        text.insert(END, line + "\n", 'one')
+                    case 2: 
+                        text.insert(END, line + "\n", 'two')
+                    case 3:
+                        text.insert(END, line + "\n", 'three')
+                    case 4:
+                        text.insert(END, line + "\n", 'four')
+                    case _:
+                        text.insert(END, line + "\n")
+        else:
+            for line in lines:
+                text.insert(END, line + "\n")
         text.config(state=DISABLED)
 
 def save_logic():
@@ -193,6 +196,8 @@ filemenu.add_command(label="Exit", command=window.quit)
 menubar.add_cascade(label="Options", menu=optionmenu)
 full_logic = IntVar()
 optionmenu.add_checkbutton(label="Show logic", onvalue=1, offvalue=0, variable=full_logic, command=show_logic)
+level_colours = IntVar()
+optionmenu.add_checkbutton(label="Hide level colours", onvalue=1, offvalue=0, variable=level_colours, command=show_logic)
 
 yscroll = Scrollbar(window)
 yscroll.pack(side=RIGHT, fill=Y)
