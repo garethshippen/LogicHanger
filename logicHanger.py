@@ -1,6 +1,7 @@
 import csv
 import copy
 from tkinter import *
+from tkinter import messagebox
 from tkinter import filedialog as fd
 
 class Field():
@@ -146,13 +147,17 @@ def show_logic():
 
 def save_logic():
     global lines
+    if isinstance(lines, str):
+        messagebox.showwarning(title="Error", message="Please open a Data Dictionary first.")
+        return
     save_path = fd.asksaveasfile(initialfile="logic.txt",\
                                 defaultextension=".txt",\
                                 filetypes=[('Text Files','*.csv'),('All Files','*.*')],\
                                 mode='w')
-    for line in lines:
-        save_path.write(line + '\n')
-    save_path.close()
+    if save_path:
+        for line in lines:
+            save_path.write(line + '\n')
+        save_path.close()
                 
 window = Tk()
 window.title("REDCap Logic Tree")
