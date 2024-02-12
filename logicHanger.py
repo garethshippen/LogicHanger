@@ -119,8 +119,10 @@ def gen_lines(filename):
 ### BEGIN GUI ###
 #################
 lines = "Open a Data Dictionary\nfrom the File menu."
+path = None
 def select_file():
     global lines
+    global path
     filetypes = [('CSV files', '*.csv')]
     path = fd.askopenfilename(title="Select Data Dictionary", filetypes=filetypes)
     if len(path) > 0:
@@ -128,6 +130,9 @@ def select_file():
         show_logic()
 
 def show_logic():
+    global lines
+    if path:
+        lines = gen_lines(path)
     if isinstance(lines, str):
         text.config(state=NORMAL)
         text.insert(END, lines)
