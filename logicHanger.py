@@ -129,8 +129,11 @@ def select_file():
 
 def show_logic():
     if isinstance(lines, str):
+        text.config(state=NORMAL)
         text.insert(END, lines)
+        text.config(state=DISABLED)
     else:
+        text.config(state=NORMAL)
         text.delete('1.0', END)
         for line in lines:
             match line.count("-")%5:
@@ -144,6 +147,7 @@ def show_logic():
                     text.insert(END, line + "\n", 'four')
                 case _:
                     text.insert(END, line + "\n")
+        text.config(state=DISABLED)
 
 def save_logic():
     global lines
