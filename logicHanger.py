@@ -8,6 +8,7 @@ import copy
 from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog as fd
+from tkinter.ttk import Treeview
 
 class Field():
     def __init__(self, row, fieldname_header):
@@ -57,14 +58,21 @@ class Field():
         print("Shows: {}".format(self.shows)) # TODO
         print()
 
-def gen_lines(filename):
-    def store_logic(field, level, storage):
-        storage.append((level * "  " + level * "-" + field.get_field_name() + full_logic.get() * ("\t\t" + field.shown_by)))
-        children = field.get_shows()
-        if children:
-            for child in children:
-                store_logic(child, level + 1, storage)
+#################
+### BEGIN GUI ###
+#################
+''' Open a file '''
+lines = "Open a Data Dictionary\nfrom the File menu."
+path = None
+def select_file():
+    global lines
+    global path
+    filetypes = [('CSV files', '*.csv')]
+    path = fd.askopenfilename(title="Select Data Dictionary", filetypes=filetypes)
+    if len(path) > 0:
+        lines = gen_tree(path)
 
+def gen_tree(filename):
     def read_csv(input_file):
         fields = {}
         roots = []
@@ -78,10 +86,6 @@ def gen_lines(filename):
                     roots.append(row[fieldname_header])
                 fieldnames.add(row[fieldname_header])
         return fields, roots, fieldnames
-
-    ########################
-    ###### BEGIN MAIN ######
-    ########################
 
     data, roots, fieldnames = read_csv(filename)
 
@@ -105,84 +109,23 @@ def gen_lines(filename):
         roots.append(unknown)
 
     # Associate parents with children
-    unknowns = []
-    for key, value in data.items():
+    for value in data.values():
         parents = value.get_shown_by_body()
         for parent in parents:
-            try:
-                data[parent].add_shows(value)
-            except Exception:
-                unknowns.append((parent,key))
+            data[parent].add_shows(value)
 
-    lines = []
-    for root in roots:
-        store_logic(data[root],  0, lines)
+    def gen_branches(fieldname, parent, data):
+        field = data[fieldname]
+        my_id = tree.insert(parent=parent, index=END, text = field.get_field_name())
+        #storage.append((level * "  " + level * "-" + field.get_field_name() + full_logic.get() * ("\t\t" + field.shown_by)))
+        children = field.get_shows()
+        if children:
+            for child in children:
+                gen_branches(child.get_field_name(), my_id, data)
     
-    return lines
+    for root in roots:
+        gen_branches(root, '', data)
 
-#################
-### BEGIN GUI ###
-#################
-lines = "Open a Data Dictionary\nfrom the File menu."
-path = None
-def select_file():
-    global lines
-    global path
-    filetypes = [('CSV files', '*.csv')]
-    path = fd.askopenfilename(title="Select Data Dictionary", filetypes=filetypes)
-    if len(path) > 0:
-        lines = gen_lines(path)
-        show_logic()
-
-def get_level(input):
-    for i in range(len(input)):
-        if input[i] != " ":
-            return i
-
-def show_logic():
-    global lines
-    global path
-    if path:
-        lines = gen_lines(path)
-    if isinstance(lines, str):
-        text.config(state=NORMAL)
-        text.insert(END, lines)
-        text.config(state=DISABLED)
-    else:
-        text.config(state=NORMAL)
-        text.delete('1.0', END)
-        if not level_colours.get():
-            for line in lines:
-                match get_level(line)%5:
-                    case 1:
-                        text.insert(END, line + "\n", 'one')
-                    case 2: 
-                        text.insert(END, line + "\n", 'two')
-                    case 3:
-                        text.insert(END, line + "\n", 'three')
-                    case 4:
-                        text.insert(END, line + "\n", 'four')
-                    case _:
-                        text.insert(END, line + "\n")
-        else:
-            for line in lines:
-                text.insert(END, line + "\n")
-        text.config(state=DISABLED)
-
-def save_logic():
-    global lines
-    if isinstance(lines, str):
-        messagebox.showwarning(title="Error", message="Please open a Data Dictionary first.")
-        return
-    save_path = fd.asksaveasfile(initialfile="logic.txt",\
-                                defaultextension=".txt",\
-                                filetypes=[('Text Files','*.txt'),('All Files','*.*')],\
-                                mode='w')
-    if save_path:
-        for line in lines:
-            save_path.write(line + '\n')
-        save_path.close()
-                
 window = Tk()
 window.title("REDCap Logic Tree")
 window.geometry("600x600")
@@ -194,15 +137,13 @@ optionmenu = Menu(menubar)
 
 menubar.add_cascade(label="File", menu=filemenu)
 filemenu.add_command(label = "Open", command= select_file)
-filemenu.add_command(label = "Save", command=save_logic)
+#filemenu.add_command(label = "Save")
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=window.quit)
 
-menubar.add_cascade(label="Options", menu=optionmenu)
+""" menubar.add_cascade(label="Options", menu=optionmenu)
 full_logic = IntVar()
-optionmenu.add_checkbutton(label="Show logic", onvalue=1, offvalue=0, variable=full_logic, command=show_logic)
-level_colours = IntVar()
-optionmenu.add_checkbutton(label="Hide level colours", onvalue=1, offvalue=0, variable=level_colours, command=show_logic)
+optionmenu.add_checkbutton(label="Show logic", onvalue=1, offvalue=0, variable=full_logic, command=gen_tree) """
 
 yscroll = Scrollbar(window)
 yscroll.pack(side=RIGHT, fill=Y)
@@ -210,17 +151,11 @@ yscroll.pack(side=RIGHT, fill=Y)
 xscroll = Scrollbar(window, orient='horizontal')
 xscroll.pack(side=BOTTOM, fill=X)             
 
-text = Text(window,yscrollcommand = yscroll.set, xscrollcommand=xscroll.set, wrap=NONE)
-text.pack(side=LEFT, fill = BOTH, expand=1)
-text.tag_config('one', foreground = "red")
-text.tag_config('two', foreground = "blue")
-text.tag_config('three', foreground = "#1d5c11")
-text.tag_config('four', foreground="#7c206f")
+tree = Treeview(window)
+tree.pack(fill=BOTH, expand=1)
 
-show_logic()
-
-yscroll.config(command=text.yview)
-xscroll.config(command=text.xview)
+yscroll.config(command=tree.yview)
+xscroll.config(command=tree.xview)
 window.mainloop()
 
 ###############
