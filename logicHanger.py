@@ -96,7 +96,8 @@ def gen_tree(filename):
         for shown in shown_by:
             parents.add(shown)
     unknowns = parents - fieldnames
-
+    unknowns = sorted(unknowns)
+    
     # Create a blank Field
     empty_field = copy.deepcopy(data[roots[0]])
     empty_field.set_field_name("empty")
@@ -114,17 +115,16 @@ def gen_tree(filename):
         for parent in parents:
             data[parent].add_shows(value)
 
-    def gen_branches(fieldname, parent, data):
+    def gen_branches(fieldname, parent, data, level):
         field = data[fieldname]
-        my_id = tree.insert(parent=parent, index=END, text = field.get_field_name())
-        #storage.append((level * "  " + level * "-" + field.get_field_name() + full_logic.get() * ("\t\t" + field.shown_by)))
+        my_id = tree.insert(parent=parent, index=END, text = field.get_field_name(), values=field.get_shown_by().replace(" ","\ "), tags=(str(level%5)))
         children = field.get_shows()
         if children:
             for child in children:
-                gen_branches(child.get_field_name(), my_id, data)
+                gen_branches(child.get_field_name(), my_id, data, level+1)
     
     for root in roots:
-        gen_branches(root, '', data)
+        gen_branches(root, '', data, 0)
 
 window = Tk()
 window.title("REDCap Logic Tree")
@@ -137,7 +137,6 @@ optionmenu = Menu(menubar)
 
 menubar.add_cascade(label="File", menu=filemenu)
 filemenu.add_command(label = "Open", command= select_file)
-#filemenu.add_command(label = "Save")
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=window.quit)
 
@@ -145,15 +144,26 @@ filemenu.add_command(label="Exit", command=window.quit)
 full_logic = IntVar()
 optionmenu.add_checkbutton(label="Show logic", onvalue=1, offvalue=0, variable=full_logic, command=gen_tree) """
 
+
+tree = Treeview(window, columns=('#1'))
+""" tree.column('#0', width = 10, minwidth=10, anchor=W)
+tree.column('#1', width = 50, minwidth=50, anchor=W) """
+tree.heading('#0', text = 'Field label')
+tree.heading('#1', text = 'Branching logic')
+
+tree.pack(fill=BOTH, expand=1)
+tree.tag_configure('0', background='#ffffff')
+tree.tag_configure('1', background='#45e6fc')
+tree.tag_configure('2', background='#f4b7ee')
+tree.tag_configure('3', background='#9ff497')
+tree.tag_configure('4', background='#f1af89')
+
+
+
 yscroll = Scrollbar(window)
 yscroll.pack(side=RIGHT, fill=Y)
-
 xscroll = Scrollbar(window, orient='horizontal')
-xscroll.pack(side=BOTTOM, fill=X)             
-
-tree = Treeview(window)
-tree.pack(fill=BOTH, expand=1)
-
+xscroll.pack(side=BOTTOM, fill=X)  
 yscroll.config(command=tree.yview)
 xscroll.config(command=tree.xview)
 window.mainloop()
