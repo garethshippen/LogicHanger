@@ -142,10 +142,15 @@ window = Tk()
 window.title("REDCap Logic Tree")
 window.geometry("600x600")
 
+yscroll = Scrollbar(window)
+yscroll.pack(side=RIGHT, fill=Y)
+xscroll = Scrollbar(window, orient='horizontal')
+xscroll.pack(side=BOTTOM, fill=X)  
+
 menubar = Menu(window)
 window.config(menu=menubar)
-filemenu = Menu(menubar)
-optionmenu = Menu(menubar)
+filemenu = Menu(menubar, tearoff="off")
+optionmenu = Menu(menubar, tearoff="off")
 
 menubar.add_cascade(label="File", menu=filemenu)
 filemenu.add_command(label = "Open", command= select_file)
@@ -157,8 +162,6 @@ optionmenu.add_command(label="Open all", command =open_children)
 optionmenu.add_command(label="Close all", command =close_children)
 
 tree = Treeview(window, columns=('#1'))
-""" tree.column('#0', width = 10, minwidth=10, anchor=W)
-tree.column('#1', width = 50, minwidth=50, anchor=W) """
 tree.heading('#0', text = 'Field label')
 tree.heading('#1', text = 'Branching logic')
 
@@ -169,12 +172,6 @@ tree.tag_configure('2', background='#f4b7ee')
 tree.tag_configure('3', background='#9ff497')
 tree.tag_configure('4', background='#f1af89')
 
-
-
-yscroll = Scrollbar(window)
-yscroll.pack(side=RIGHT, fill=Y)
-xscroll = Scrollbar(window, orient='horizontal')
-xscroll.pack(side=BOTTOM, fill=X)  
 yscroll.config(command=tree.yview)
 xscroll.config(command=tree.xview)
 
