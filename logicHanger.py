@@ -126,6 +126,18 @@ def gen_tree(filename):
     for root in roots:
         gen_branches(root, '', data, 0)
 
+def open_children(child = ""):
+    for child in tree.get_children(child):
+        tree.item(child, open=True)
+        open_children(child)
+
+def close_children(child = ""):
+    for child in tree.get_children(child):
+        tree.item(child, open=False)
+        open_children(child)
+    
+
+
 window = Tk()
 window.title("REDCap Logic Tree")
 window.geometry("600x600")
@@ -140,10 +152,9 @@ filemenu.add_command(label = "Open", command= select_file)
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=window.quit)
 
-""" menubar.add_cascade(label="Options", menu=optionmenu)
-full_logic = IntVar()
-optionmenu.add_checkbutton(label="Show logic", onvalue=1, offvalue=0, variable=full_logic, command=gen_tree) """
-
+menubar.add_cascade(label="Options", menu=optionmenu)
+optionmenu.add_command(label="Open all", command =open_children)
+optionmenu.add_command(label="Close all", command =close_children)
 
 tree = Treeview(window, columns=('#1'))
 """ tree.column('#0', width = 10, minwidth=10, anchor=W)
@@ -166,6 +177,7 @@ xscroll = Scrollbar(window, orient='horizontal')
 xscroll.pack(side=BOTTOM, fill=X)  
 yscroll.config(command=tree.yview)
 xscroll.config(command=tree.xview)
+
 window.mainloop()
 
 ###############
