@@ -139,7 +139,7 @@ def close_children(child = ""):
 
 
 window = Tk()
-window.title("REDCap Logic Tree")
+window.title("REDCap Logic Tree (Beta)")
 window.geometry("600x600")
 
 yscroll = Scrollbar(window)
@@ -158,6 +158,7 @@ filemenu.add_separator()
 filemenu.add_command(label="Exit", command=window.quit)
 
 menubar.add_cascade(label="Options", menu=optionmenu)
+optionmenu.add_radiobutton(label="Toggle colours")
 optionmenu.add_command(label="Open all", command =open_children)
 optionmenu.add_command(label="Close all", command =close_children)
 
