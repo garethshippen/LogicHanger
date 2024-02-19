@@ -117,10 +117,7 @@ def gen_tree(filename):
 
     def gen_branches(fieldname, parent, data, level):
         field = data[fieldname]
-        if toggle_colours:
-            my_id = tree.insert(parent=parent, index=END, text = field.get_field_name(), values=field.get_shown_by().replace(" ","\ "), tags=(str(level%5)))
-        else:
-            my_id = tree.insert(parent=parent, index=END, text = field.get_field_name(), values=field.get_shown_by().replace(" ","\ "))
+        my_id = tree.insert(parent=parent, index=END, text = field.get_field_name(), values=field.get_shown_by().replace(" ","\ "), tags=(str(level%5)))
         children = field.get_shows()
         if children:
             for child in children:
@@ -161,8 +158,6 @@ filemenu.add_separator()
 filemenu.add_command(label="Exit", command=window.quit)
 
 menubar.add_cascade(label="Options", menu=optionmenu)
-toggle_colours = IntVar()
-optionmenu.add_radiobutton(label="Toggle colours")
 optionmenu.add_command(label="Open all", command =open_children)
 optionmenu.add_command(label="Close all", command =close_children)
 
@@ -172,7 +167,7 @@ tree.heading('#1', text = 'Branching logic')
 
 tree.pack(fill=BOTH, expand=1)
 tree.tag_configure('0', background='#ffffff')
-tree.tag_configure('1', background='#45e6fc')
+tree.tag_configure('1', background='#91cff2')
 tree.tag_configure('2', background='#f4b7ee')
 tree.tag_configure('3', background='#9ff497')
 tree.tag_configure('4', background='#f1af89')
