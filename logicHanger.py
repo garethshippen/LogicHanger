@@ -117,7 +117,10 @@ def gen_tree(filename):
 
     def gen_branches(fieldname, parent, data, level):
         field = data[fieldname]
-        my_id = tree.insert(parent=parent, index=END, text = field.get_field_name(), values=field.get_shown_by().replace(" ","\ "), tags=(str(level%5)))
+        if toggle_colours:
+            my_id = tree.insert(parent=parent, index=END, text = field.get_field_name(), values=field.get_shown_by().replace(" ","\ "), tags=(str(level%5)))
+        else:
+            my_id = tree.insert(parent=parent, index=END, text = field.get_field_name(), values=field.get_shown_by().replace(" ","\ "))
         children = field.get_shows()
         if children:
             for child in children:
@@ -158,6 +161,7 @@ filemenu.add_separator()
 filemenu.add_command(label="Exit", command=window.quit)
 
 menubar.add_cascade(label="Options", menu=optionmenu)
+toggle_colours = IntVar()
 optionmenu.add_radiobutton(label="Toggle colours")
 optionmenu.add_command(label="Open all", command =open_children)
 optionmenu.add_command(label="Close all", command =close_children)
