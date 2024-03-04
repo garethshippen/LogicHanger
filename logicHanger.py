@@ -70,7 +70,7 @@ def select_file():
     filetypes = [('CSV files', '*.csv')]
     path = fd.askopenfilename(title="Select Data Dictionary", filetypes=filetypes)
     if len(path) > 0:
-        lines = gen_tree(path)
+        gen_tree(path)
 
 def gen_tree(filename):
     def read_csv(input_file):
@@ -139,8 +139,17 @@ def close_children(child = ""):
         tree.item(child, open=False)
         close_children(child)
     
-def save_tree(field, level, storage):
-    pass
+def save_tree():
+    global lines
+    save_path = fd.asksaveasfile(initialfile="logic.txt",\
+                                defaultextension=".txt",\
+                                filetypes=[('Text Files','*.txt'),('All Files','*.*')],\
+                                mode='w')
+    if save_path:
+        output = open(save_path, 'w', encoding="utf-8")
+        for line in lines:
+            output.write(line + '\n')
+        output.close()
 
 window = Tk()
 window.title("REDCap Logic Tree (Beta)")
