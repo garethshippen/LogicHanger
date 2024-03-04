@@ -136,7 +136,13 @@ def close_children(child = ""):
         tree.item(child, open=False)
         open_children(child)
     
-
+def save_tree(field, level, storage):
+    storage.append((level * "  " + "└" + (level-1) * "─" + field.get_field_name() + "\t\t\t" + field.shown_by))
+    #storage.append((level * "  " + level * "-" + field.get_field_name() + "\t\t\t" + field.shown_by))
+    children = field.get_shows()
+    if children:
+        for child in children:
+            save_tree(child, level + 1, storage)
 
 window = Tk()
 window.title("REDCap Logic Tree (Beta)")
