@@ -120,7 +120,7 @@ def gen_tree(filename):
         global lines
         field = data[fieldname]
         my_id = tree.insert(parent=parent, index=END, text = field.get_field_name(), values=field.get_shown_by().replace(" ","\ "), tags=(str(level%5)))
-        lines.append((level * "  " + "└" + (level-1) * "─" + field.get_field_name() + "\t\t\t" + field.shown_by))
+        lines.append((level * "  " + (1 if level > 0 else 0) * "└" + (level-1) * "─" + field.get_field_name() + "\t\t\t" + field.shown_by))
         children = field.get_shows()
         if children:
             for child in children:
