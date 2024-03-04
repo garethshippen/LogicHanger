@@ -141,15 +141,12 @@ def close_children(child = ""):
     
 def save_tree():
     global lines
-    save_path = fd.asksaveasfile(initialfile="logic.txt",\
+    save_path = fd.asksaveasfilename(initialfile="logic.txt",\
                                 defaultextension=".txt",\
-                                filetypes=[('Text Files','*.txt'),('All Files','*.*')],\
-                                mode='w')
-    if save_path:
-        output = open(save_path, 'w', encoding="utf-8")
+                                filetypes=[('Text Files','*.txt'),('All Files','*.*')])
+    with open(save_path, 'w', encoding='utf-8') as output:
         for line in lines:
             output.write(line + '\n')
-        output.close()
 
 window = Tk()
 window.title("REDCap Logic Tree (Beta)")
