@@ -155,7 +155,7 @@ window.geometry("600x600")
 yscroll = Scrollbar(window)
 yscroll.pack(side=RIGHT, fill=Y)
 xscroll = Scrollbar(window, orient='horizontal')
-xscroll.pack(side=BOTTOM, fill=X)  
+xscroll.pack(side=BOTTOM, fill=X) 
 
 menubar = Menu(window)
 window.config(menu=menubar)
@@ -183,9 +183,10 @@ tree.tag_configure('2', background='#f4b7ee')
 tree.tag_configure('3', background='#9ff497')
 tree.tag_configure('4', background='#f1af89')
 
-yscroll.config(command=tree.yview)
-xscroll.config(command=tree.xview)
+""" yscroll.config(command=tree.yview)
+xscroll.config(command=tree.xview) """
 
+tree.config(yscrollcommand=yscroll.set)
 window.mainloop()
 
 ###############
