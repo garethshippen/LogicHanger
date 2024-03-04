@@ -62,7 +62,7 @@ class Field():
 ### BEGIN GUI ###
 #################
 ''' Open a file '''
-lines = "Open a Data Dictionary\nfrom the File menu."
+lines = []
 path = None
 def select_file():
     global lines
@@ -115,9 +115,12 @@ def gen_tree(filename):
         for parent in parents:
             data[parent].add_shows(value)
 
+    # Inserts items into the tree view
     def gen_branches(fieldname, parent, data, level):
+        global lines
         field = data[fieldname]
         my_id = tree.insert(parent=parent, index=END, text = field.get_field_name(), values=field.get_shown_by().replace(" ","\ "), tags=(str(level%5)))
+        lines.append((level * "  " + "└" + (level-1) * "─" + field.get_field_name() + "\t\t\t" + field.shown_by))
         children = field.get_shows()
         if children:
             for child in children:
@@ -134,15 +137,10 @@ def open_children(child = ""):
 def close_children(child = ""):
     for child in tree.get_children(child):
         tree.item(child, open=False)
-        open_children(child)
+        close_children(child)
     
 def save_tree(field, level, storage):
-    storage.append((level * "  " + "└" + (level-1) * "─" + field.get_field_name() + "\t\t\t" + field.shown_by))
-    #storage.append((level * "  " + level * "-" + field.get_field_name() + "\t\t\t" + field.shown_by))
-    children = field.get_shows()
-    if children:
-        for child in children:
-            save_tree(child, level + 1, storage)
+    pass
 
 window = Tk()
 window.title("REDCap Logic Tree (Beta)")
@@ -160,6 +158,7 @@ optionmenu = Menu(menubar, tearoff="off")
 
 menubar.add_cascade(label="File", menu=filemenu)
 filemenu.add_command(label = "Open", command= select_file)
+filemenu.add_command(label = "Save", command= save_tree)
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=window.quit)
 
