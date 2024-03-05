@@ -1,6 +1,6 @@
 # LogicHanger
 ## Purpose
-Creates a text file showing the fields which are dependent on another field in a REDCap project.
+Displays a tree view, showing the fields which are dependent on another field in a REDCap project.
 
 ## Instructions
 1. Download the data dictionary of the REDCap project in CSV format.
